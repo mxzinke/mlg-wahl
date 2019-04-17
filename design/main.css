@@ -1,0 +1,85 @@
+﻿/* Design by Maximilian Zinke */
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:400|Material+Icons);
+
+/* Content Design Types*/
+html {height: 100%;box-sizing: border-box;}
+* {margin:0;padding:0;color:black;font-family:'Roboto', sans-serif;font-weight: 400;box-sizing: inherit;}
+*:before, *:after {box-sizing: inherit;}
+body {background:#ddd;position: relative;min-height: 100%;}
+h1 {font-size:26px;}
+a { color:black;text-decoration:none; }
+a:hover { text-decoration-color:#087f23;text-decoration:underline; }
+b {font-weight: bold;}
+
+img {max-width:500px;height:auto;}
+
+form.login h1 {font-size:200%;margin-bottom:5px;}
+form.login {background-color:#fafafa;color:black;border-top:1px solid #4caf50;margin:150px 35%;padding:10px 15px;border-bottom:1px solid #4caf50;max-height: 450px;width:30%;font-size:18px;padding:10px 32px;text-align: center;box-shadow: 0 2px 5px rgba(0,0,0,0.14);border-radius: 2px;}
+form.login input {width: 85%;background:transparent;margin:3px;font-size:18px;border:none;border-bottom: 1px solid #989898;padding:3px 5px;transition:200ms;}
+form.login input:hover, form.login input:focus {border-bottom:1px solid black;transition:200ms}
+
+form input {font-size:18px;padding:2px 3px;width:auto;margin:3px;}
+form textarea {font-size:18px;padding:2px 3px;width:20%;height:50px;margin:3px;}
+
+button {font-size: 22px;background:transparent;color:#087f23;border:1px solid #087f23;padding:3px 3px;transition: 200ms;margin:5px;padding:3px 7px;border-radius: 2px;box-shadow: 0 2px 5px rgba(0,0,0,0.26);}
+button:hover {background:#087f23;color:#fafafa;transition: 200ms;box-shadow: 0 1px 2px rgba(0,0,0,0.3);}
+img#remove {width:16px;height:16px;padding:0;margin:0;background-color:transparent;border:none;}
+
+table {font-size:22px;margin:0;padding:0;text-align: center;border-collapse: collapse;width:100%;}
+table tr {transition:200ms;padding:0;margin:0;}
+table tr:hover {background:#8bc34a;transition:200ms;}
+table td {padding:7px 25px;margin:0;}
+table td a {text-decoration: none;padding:0;margin:0;}
+table td a:hover {text-decoration: underline;}
+
+/* DIV Design Structure */
+header {position:fixed;top:0;left:0;height:50px;width:100%;background-color:#8bc34a;box-shadow: 0 5px 10px rgba(0,0,0,0.2);overflow: hidden;padding-right:25px;z-index:10;}
+header img#logo {height:50px;width: auto;float:left;display:inline;margin-left: 25px;}
+ul#main-nav {margin:0;padding:0;display:inline;list-style: none;}
+ul#main-nav li#button {float:right;}
+ul#main-nav li#button a {text-shadow: 0 1px 3px rgba(0,0,0,0.4);height: 50px;width: auto;font-size:22px;color:#f5f5f5;display:block;text-align: center;padding: 12px 14px;line-height:1.4;border-bottom: 2px solid transparent;box-sizing: border-box;text-decoration: none;transition: 100ms;}
+ul#main-nav li#button a:hover {border-bottom:2px solid #00701a;text-decoration: none;transition: 100ms;}
+
+i#lock {color:#f5f5f5;font-size:26px;vertical-align: text-top;}
+
+div.content {position:absolute;top:50px;right:0;left:0;overflow-x:hidden;}
+div.content div.headline {background:#ddd;min-height: 50px;padding:15px 40px;z-index:0;}
+div.content div.headline h1#title {font-size: 28px;}
+div.content div.headline ul#sub-nav {list-style: none;}
+div.content div.headline ul#sub-nav li {display:inline;}
+
+div.content p {background:white;padding: 10px 30px;margin-bottom:10px;z-index:4;box-shadow:0 0 9px rgba(0,0,0,0.32);}
+div.content p:last-child {margin-bottom: 70px;}
+div.content div.admin {background:white;padding: 10px 30px;margin-bottom:10px;z-index:4;box-shadow:0 0 9px rgba(0,0,0,0.32);}
+div.content div.admin p{background:transparent;margin:0;padding:0;box-shadow:none;}
+
+div.footer {position: fixed;bottom:0;left:0;right:0; background:#f2f2f2;text-align: center;padding:15px 0;box-shadow: 0 1px 7px rgba(0,0,0,0.3);z-index:10;}
+div.footer span#author {letter-spacing:-1px;font-size:14px;color:#a3a3a3;}
+div.footer span#author a {color:#a3a3a3;text-decoration: none;transition:100ms;}
+div.footer span#author a:hover {color:#80e27e;transition:100ms;}
+
+@keyframes error {
+    0% {bottom:-100px;}
+    10% {bottom:70px;}
+    90% {bottom:70px;}
+    100% {bottom:-100px;}
+}
+
+p.error {position:fixed;right:50px;bottom:-100px;border-radius:30px;color:black;animation-name:error;animation-duration:10s;padding:4px 15px;max-width:380px;z-index:100;} /* Animation */
+
+/* Mobile Design Extras */
+@media screen and (max-width:1260px) {
+    div.content p {padding:5px 5px;}
+    form.login {margin:80px 0;width:auto;border:none;padding:25px 32px;}
+    form.login h1 {font-size: 250%;}
+    form.login input {width:80%;font-size:22px;margin:7px;}
+    form.login button {font-size:24px;margin:7px;}
+    table {font-size:18px;}
+    header img#logo {display:none;}
+}
+@media screen and (max-width: 480px) {
+	header {font-size:13px;}
+	form.login input {width:90%;font-size:18px;}
+	table {font-size:16px;}
+}
