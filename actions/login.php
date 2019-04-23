@@ -1,10 +1,6 @@
 <?php
-/* This file is for checking login 
- * Please rewrite this code @important */
-
 include('../settings.php');
 
-session_start();
 $mode = $_GET['mode'];
 
 if ($mode == 1) { # Normal Userlogin Mode
@@ -28,7 +24,7 @@ if ($mode == 1) { # Normal Userlogin Mode
 
             header("Location: ../index.php");
         } else {
-            header("Location: ../index.php?site=login&error=5"); # Falscher Login
+            
         }
     } else {
         header("Location: ../index.php?site=login&error=8"); # Nutzer Exisiert nicht
@@ -36,4 +32,5 @@ if ($mode == 1) { # Normal Userlogin Mode
 } else {
     echo "Mode FEHLER!";
 }
+
 ?>
