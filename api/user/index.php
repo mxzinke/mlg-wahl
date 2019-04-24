@@ -4,9 +4,6 @@
 # Settings for Database-Connection
 include('../../settings.php');
 
-
-function do_hash($string) { return hash("havel256,4", $string); }
-
 function new_session($uid) {      
     # generating a new session key:
     $sessionKey = mt_rand(10000000, 99999999);

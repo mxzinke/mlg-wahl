@@ -6,9 +6,7 @@ $dbpass = "derfischmax";    # Passwort
 $dbtable = "mlg-wahl";      # Tabelle
 
 # Interne Zusatzverschlüsselung:
-$encryptionMethod = "AES-256-CBC"; # interne Verschlüsselungsart
 $databaseHashingMethod = "havel256,4"; # Passwort Hashing Methode in der Datenbank (! Änderung kann zu Problemen führen !)
-$secret = "1234567890@@@@@@@@@@123456789012"; # Geheimkey, muss mind. 32 Zeichen lang sein
 
 ################################################################################
 # ###### Do not touch following code! ###### Folgendes nicht verändern! ###### #
@@ -186,9 +184,6 @@ function ask_api($apiurl) {
     return json_decode($response);
 }
 
-function encrypt($textToEncrypt) {
-    $iv = substr($secret, 0, 16);
-    return openssl_encrypt($textToEncrypt, $encryptionMethod, $secret,0,$iv);
-}
+function do_hash($string) { return hash($databaseHashingMethod, $string); }
 
 ?>

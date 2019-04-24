@@ -10,7 +10,7 @@ if (ask_api($apiurl) == "true") {
     echo("Logged-in.");
 
     $_SESSION['uid'] = $userid;
-    $_SESSION['session_key'] = encrypt($session_key);
+    $_SESSION['session_key'] = $session_key;
 } else {
     print_r(ask_api($apiurl));
 }
