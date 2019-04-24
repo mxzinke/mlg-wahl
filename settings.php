@@ -5,18 +5,17 @@ $dbuser = "mlg-wahl";       # Nutzer
 $dbpass = "derfischmax";    # Passwort
 $dbtable = "mlg-wahl";      # Tabelle
 
+# Interne Zusatzverschlüsselung:
+$encryptionMethod = "AES-256-CBC"; # interne Verschlüsselungsart
+$databaseHashingMethod = "havel256,4"; # Passwort Hashing Methode in der Datenbank (! Änderung kann zu Problemen führen !)
+$secret = "1234567890@@@@@@@@@@123456789012"; # Geheimkey, muss mind. 32 Zeichen lang sein
+
 ################################################################################
 # ###### Do not touch following code! ###### Folgendes nicht verändern! ###### #
 ################################################################################
 
 error_reporting(E_ERROR/* | E_WARNING*/); # Error Modus
-
 if(session_status() != PHP_SESSION_ACTIVE) { session_start(); } # Session start
-
-# Session'n'Cookie check
-$userc = $_SESSION['userc'];
-$passc = $_SESSION['passc'];
-$devcookie = $_COOKIE['devcookie'];
 $time = time();
 
 # Database connection
@@ -26,7 +25,6 @@ mysqli_set_charset($db, 'utf8');
 
 # loading database settings
 $infos = mysqli_query($db, "SELECT value, name FROM settings");
-
 while ($info = mysqli_fetch_array($infos)) {
     $value = $info['value'];
     $name = $info['name'];
@@ -37,41 +35,20 @@ while ($info = mysqli_fetch_array($infos)) {
     if ($name == 'timerend') { $timerend = $value; }
 }
 
-
-
 # blocked mode
-
 $blocked = mysqli_fetch_array(mysqli_query($db, "SELECT value FROM settings WHERE name = 'state_blocked'"));
-if ($blocked['value'] == 'dev') { $closedmode = true; } else { $closedmode = false; }
 if ($blocked['value'] == 'on') {
     $spring = true;
     if ($timerstart <= $time and $timerend >= $time) { $spring = false; }
 } else { $spring = false; }
 
-
-
-# development mode
-if ($devcookie == 'enabled') { $closedmode = false; }
-if ($_GET['mode'] == "dev") { setcookie("devcookie", "enabled", time() + 3600 * 24 * 3); } # Temporären Modus aktivieren (3 Tage)
-if ($closedmode) { echo('<p style="color:red;">Entschuldige, aber an dieser Seite wird gerade bearbeitet! Bitte versuch es zu einem späteren Zeitpunkt noch einmal. - Danke für deine Verständnis. Deine MLG Entwicklungsteam</p>'); exit(); }
-
-
-
-if (isset($userc) and isset($passc)) {
-
+# validating the user
+if (isset($_SESSION['uid']) and isset($_SESSION['session_key'])) {
     $user = mysqli_query($db, "SELECT username, gid, class, password FROM users WHERE uid = '$userc'");
     $u_results = mysqli_fetch_array($user);
 
     if (mysqli_num_rows($user) == 1) { # Variablen und Auswertung der Nutzerdatenbanken Informationen
-        if ($u_results['password'] == $passc) {
-            $username = $u_results['username'];
-            $gid = $u_results['gid'];
-            $s_class = $u_results['class'];
-            $user = true;
-        } else {
-            $user = false;
-            #header("Location: logout.php");
-        } # Wenn Nutzer falsches Password eingespeichert hat!
+        
     } else {
         $user = false;
         header("Location: logout.php");
@@ -86,7 +63,6 @@ if ($user and isset($gid)) {
 
 # Errors
 $get_error = $_GET['error'];
-
 if (isset($get_error) and $get_error != "") {
 
     if ($get_error == "1")      { echo '<p class="error" style="background:green;">Erfolgreich eingetragen!</p>'; }
@@ -195,6 +171,24 @@ function check_right($rid, $ownpermission) {
             return true;
         }
     }
+}
+
+function ask_api($apiurl) {
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $apiurl);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return json_decode($response);
+}
+
+function encrypt($textToEncrypt) {
+    $iv = substr($secret, 0, 16);
+    return openssl_encrypt($textToEncrypt, $encryptionMethod, $secret,0,$iv);
 }
 
 ?>
