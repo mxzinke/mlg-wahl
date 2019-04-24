@@ -1,36 +1,18 @@
 <?php
 include('../settings.php');
 
-$mode = $_GET['mode'];
+$userid = $_GET['uid'];
+$session_key = $_GET['session_key'];
 
-if ($mode == 1) { # Normal Userlogin Mode
-    $username = $_POST['username'];
-    $password = hash('haval256,4', $_POST['password']);
+$apiurl = 'http://' . $_SERVER['HTTP_HOST'] . '/api/user/?mode=validate&uid=' . $userid . '&session_key=' . $session_key;
 
-    $user = mysqli_query($db, "SELECT uid, gid, password FROM users WHERE username = '$username'");
-    if (mysqli_num_rows($user) == 1 ) {
-        $u_results = mysqli_fetch_array($user);
-        if ($u_results['password'] == $password) {
-            $uid = $u_results['uid'];
-            $gid = $u_results['gid'];
+if (ask_api($apiurl) == "true") {
+    echo("Logged-in.");
 
-            # Gruppenabfrage
-            $groups = mysqli_fetch_array(mysqli_query($db, "SELECT permission FROM usergroups WHERE gid = '$gid'"));
-            $permission = groups['permission'];
-
-            $_SESSION['userc'] = $uid;
-            $_SESSION['passc'] = $password;
-            if ($permission >= 100) { setcookie("devcookie", "enabled", time() + 3600 * 24 * 3); } # Für Entwickler der Entwicklercookie
-
-            header("Location: ../index.php");
-        } else {
-            
-        }
-    } else {
-        header("Location: ../index.php?site=login&error=8"); # Nutzer Exisiert nicht
-    }
+    $_SESSION['uid'] = $userid;
+    $_SESSION['session_key'] = encrypt($session_key);
 } else {
-    echo "Mode FEHLER!";
+    print_r(ask_api($apiurl));
 }
 
 ?>
