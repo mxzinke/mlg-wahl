@@ -196,6 +196,7 @@ CREATE TABLE `users` (
   `uid` int(11) NOT NULL,
   `username` varchar(32) NOT NULL,
   `password` char(255) NOT NULL,
+  `session_key` char(255) NOT NULL,
   `gid` tinyint(4) NOT NULL DEFAULT '1',
   `class` tinyint(4) DEFAULT '5'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
