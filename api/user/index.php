@@ -2,7 +2,7 @@
 /* This is the API of the Project for accessing directly from the page (via JS/TS) or by outside */
 
 # Settings for Database-Connection
-include('../../settings.php');
+require_once('../../settings.php');
 
 function new_session($uid) {      
     # generating a new session key:
@@ -45,29 +45,12 @@ function new_user($userName, $hashedPassword) {
     #comming soon
 }
 
-/* Different Modes: login | register | validate | logout */
-if (isset($_GET['mode']) == true) {
-    $mode = $_GET['mode'];
-
-    if ($mode == "login") {
-        if (isset($_GET['hashedPassword'])) { $password = $_GET['hashedPassword']; }
-        else { $password = do_hash($_GET['unhashedPassword']); }
-
-        $result = login_method($_GET['username'], $password);
-        $json_format = json_encode($result, JSON_FORCE_OBJECT);
-        
-    } else if ($mode == "register") {
-        new_user($_GET['username'], $_GET['hashedPassword']);
-        $json_format = "{comming soon}"; # Comming soon
-    } else if ($mode == "validate") {
-        $json_format = json_encode(validate_session($_GET['uid'], $_GET['session_key']), JSON_FORCE_OBJECT);
-    } else if ($mode == "logout") {
-        $result = logout_method($_GET['uid'], $_GET['session_key']);
-        $json_format = json_encode($result, JSON_FORCE_OBJECT);
-    }
-
+if (basename(__FILE__) == basename($_SERVER["SCRIPT_FILENAME"])) {
+    $json_format = json_encode(Array(
+        "actions" => Array("login", "logout", "register", "validate"),
+        "values" => Array("uid", "username", "hashedPassword", "unhashedPassword", "session_key")
+    ), JSON_FORCE_OBJECT);
+    
     echo($json_format);
 }
-
-
 ?>
