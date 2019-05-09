@@ -1,19 +1,4 @@
 <?php
-include('../settings.php');
-
-if (isset($_GET['pid'])) {
-    $pid = $_GET['pid'];
-} else {
-    //exit();
-    $pid = '1';
-}
-$data = array();
-$pname = mysqli_fetch_array(mysqli_query($db, "SELECT pname FROM selection WHERE pid='$pid'"))['pname'];
-$db_request = mysqli_query($db, "SELECT users.username FROM entries, users WHERE entries.pid='$pid' AND entries.uid=users.uid");
-
-while($db_result = mysqli_fetch_array($db_request)) {
-    $data[] = array("Username" => $db_result['username']);
-}
 
 function cleanData(&$str){
     // escape tab characters
@@ -31,22 +16,24 @@ function cleanData(&$str){
     if(strstr($str, '"')) $str = '"' . str_replace('"', '""', $str) . '"';
 }
 
-// filename for download
-$filename = $pname ."_". time() .".xls";
+function dataExport($data, $name) {
+    // filename for download
+    $filename = $name ."_". time() .".xls";
 
-header("Content-Disposition: attachment; filename=\"$filename\"");
-header("Content-Type: application/vnd.ms-excel");
+    header("Content-Disposition: attachment; filename=\"$filename\"");
+    header("Content-Type: application/vnd.ms-excel");
 
-$flag = false;
-foreach($data as $row) {
-    if(!$flag) {
-        // display field/column names as first row
-        echo implode("\t", array_keys($row)) . "\r\n";
-        $flag = true;
+    $flag = false;
+    foreach($data as $row) {
+        if(!$flag) {
+            // display field/column names as first row
+            echo implode("\t", array_keys($row)) . "\r\n";
+            $flag = true;
+        }
+        array_walk($row, __NAMESPACE__ . '\cleanData');
+        echo implode("\t", array_values($row)) . "\r\n";
     }
-    array_walk($row, __NAMESPACE__ . '\cleanData');
-    echo implode("\t", array_values($row)) . "\r\n";
+    exit();
 }
-exit;
 
 ?>
