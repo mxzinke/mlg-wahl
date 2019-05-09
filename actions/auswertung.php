@@ -4,15 +4,17 @@
     <link rel="stylesheet" type="text/css" href="../design/evaluation.css">
 </head>
 <body>
+<div class="topnav">
+    <span>Auswertung</span>
+  <a href="#home" onclick="">Home</a>
+  <a href="#unfinished" onclick="">Fehlende Schüler</a>
+  <a href="#export" onclick="">Export</a>
+</div> 
+
+<div id="unfinished">
 <?php
 /* This file is for generating a general useful output to use data later in real life */
 include("../settings.php");
-
-# Prüfen ob Eintragung noch am laufen
-if (!$spring) {
-    echo("Bitte zuerst die Eintragung schließen, bevor Auswertung möglich ist!");
-    exit();
-}
 
 # Welche Schüler noch nicht alle einträge gemacht haben
 echo("<h3>Folgende Schüler sind noch nicht (vollständig) eingetragen haben:</h3>");
@@ -65,7 +67,11 @@ if (count($data) > 0) {
     }
     echo('</tbody></table>');
 }
+?>
+</div>
 
+<div id="export">
+<?php
 function allClasses($database) {
     $db_request = mysqli_query($database, "SELECT users.username FROM users, entries WHERE CHAR_LENGTH(username)>7 AND users.uid=entries.uid");
 
@@ -82,13 +88,36 @@ function allClasses($database) {
     return $classes;
 }
 
+function allProjects($database) {
+    $db_request = mysqli_query($database, "SELECT selection.pname, selection.pid FROM selection");
+
+    while($db_pname = mysqli_fetch_array($db_request)) {
+        $entries[] = array($db_pname['pid'], $db_pname['pname']);
+        
+    }
+
+    return $entries;
+}
+
 # Export nach Klassen:
-echo('<br><br><h3>nach Klassen Exportieren:</h3><form action="export_class.php" method="get"><select name="class">');
+echo('<h3>nach jeweiligen Klassen exportieren:</h3><form class="exportForm" action="export_class.php" method="get"><select name="class">');
 foreach(allClasses($db) as $class) {
     echo('<option value="'. $class .'">'. $class .'</option>');
 }
 echo('</select> <button type="submit">Exportieren</button></form>');
 
+# Export nach Projekten:
+echo('<h3>nach jeweiligen Projekt exportieren:</h3><form class="exportForm" action="export_project.php" method="get"><select name="pid">');
+foreach(allProjects($db) as $class) {
+    echo('<option value="'. $class[0] .'">'. $class[1] .'</option>');
+}
+echo('</select> <button type="submit">Exportieren</button></form>');
+
+?>
+</div>
+
+<div id="home">
+<?php
 # Themenabfrage
 echo("<br><h2>Die Listen zu den Themen:</h2>");
 
@@ -115,5 +144,5 @@ if (mysqli_num_rows($s) > 0) {
 		echo('</tbody></table>');
 	}
 }
-
 ?>
+</div>
