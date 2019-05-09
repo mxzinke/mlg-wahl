@@ -1,0 +1,15 @@
+body {font-family: Arial, Helvetica, sans-serif;margin:0;}
+div {padding:5px 20px;}
+table.easyTable {border-collapse: collapse;border:1px solid black;}
+table.easyTable tr td, table.easyTable thead tr th {border-collapse: collapse;border:1px solid #ddd;padding:5px 15px;}
+table.easyTable thead tr th {background-color: #4CAF50;color:white;text-align: left;}
+table.easyTable tr {background-color: #fff;}
+table.easyTable tr:nth-child(even) {background-color: #f2f2f2;}
+table.easyTable tr:hover {background-color: #ddd;}
+div.topnav {background-color: #333;overflow: hidden;padding:0;}
+div.topnav span {float: left;color: #f2f2f2;text-align: center;padding: 6px 24px 6px 12px;border-right:1px solid #ddd;text-decoration: underline;font-size: 21px;}
+div.topnav a {float: left;color: #f2f2f2;text-align: center;padding: 8px 16px;text-decoration: none;font-size: 17px;}
+div.topnav a:hover {background-color: rgb(46, 100, 47);color: white;}
+form.exportForm {font-size:17px;}
+form.exportForm select, form.exportForm button {background-color:white;border:1px solid #ddd;border-radius:3px;padding:3px 6px;}
+.tabcontent {display:none;}
