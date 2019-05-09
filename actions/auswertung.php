@@ -6,12 +6,12 @@
 <body>
 <div class="topnav">
     <span>Auswertung</span>
-  <a href="#home" onclick="">Home</a>
-  <a href="#unfinished" onclick="">Fehlende Schüler</a>
-  <a href="#export" onclick="">Export</a>
+    <a class="navlink" id="defaultOpen" onclick="openPage('home', this)">Home</a>
+    <a class="navlink" onclick="openPage('unfinished', this)">Fehlende Schüler</a>
+    <a class="navlink" onclick="openPage('export', this)">Datei Export</a>
 </div> 
 
-<div id="unfinished">
+<div class="tabcontent" id="unfinished">
 <?php
 /* This file is for generating a general useful output to use data later in real life */
 include("../settings.php");
@@ -70,7 +70,7 @@ if (count($data) > 0) {
 ?>
 </div>
 
-<div id="export">
+<div class="tabcontent" id="export">
 <?php
 function allClasses($database) {
     $db_request = mysqli_query($database, "SELECT users.username FROM users, entries WHERE CHAR_LENGTH(username)>7 AND users.uid=entries.uid");
@@ -116,7 +116,7 @@ echo('</select> <button type="submit">Exportieren</button></form>');
 ?>
 </div>
 
-<div id="home">
+<div class="tabcontent" id="home">
 <?php
 # Themenabfrage
 echo("<br><h2>Die Listen zu den Themen:</h2>");
@@ -146,3 +146,22 @@ if (mysqli_num_rows($s) > 0) {
 }
 ?>
 </div>
+
+<script>
+function openPage(pageName,elmnt) {
+    var i, tabcontent, navlinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    navlinks = document.getElementsByClassName("navlink");
+    for (i = 0; i < navlinks.length; i++) {
+        navlinks[i].style.backgroundColor = "";
+    }
+    document.getElementById(pageName).style.display = "block";
+    elmnt.style.backgroundColor = "#4CAF50";
+}
+
+document.getElementById("defaultOpen").click();
+</script>
+</body>
