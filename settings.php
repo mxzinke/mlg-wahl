@@ -33,11 +33,10 @@ while ($info = mysqli_fetch_array($infos)) {
     if ($name == 'wahl_infotext') { $wahl_infotext = $value; }
     if ($name == 'website_title') { $webtitle = $value; }
     if ($name == 'max_entries') { $max_entries = $value; }
+    if ($name == 'min_entries') { $min_entries = $value; }
     if ($name == 'timerstart') { $timerstart = $value; }
     if ($name == 'timerend') { $timerend = $value; }
 }
-
-
 
 # blocked mode
 
