@@ -1,0 +1,7 @@
+body {font-family: Arial, Helvetica, sans-serif;}
+table.easyTable {border-collapse: collapse;border:1px solid black;}
+table.easyTable tr td, table.easyTable thead tr th {border-collapse: collapse;border:1px solid #ddd;padding:5px 15px;}
+table.easyTable thead tr th {background-color: #4CAF50;color:white;text-align: left;}
+table.easyTable tr {background-color: #fff;}
+table.easyTable tr:nth-child(even) {background-color: #f2f2f2;}
+table.easyTable tr:hover {background-color: #ddd;}

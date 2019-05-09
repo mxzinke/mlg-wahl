@@ -1,3 +1,9 @@
+<html>
+<head>
+    <title>Auswertungsübersicht der Einschreibung</title>
+    <link rel="stylesheet" type="text/css" href="../design/evaluation.css">
+</head>
+<body>
 <?php
 /* This file is for generating a general useful output to use data later in real life */
 include("../settings.php");
@@ -8,54 +14,60 @@ if (!$spring) {
     exit();
 }
 
-/*
-echo("Bitte Jahrgänge, welche zu betrachten sind, auswählen!");
-# Mögliche Jahrgänge
-$klassen = [];
-while ($c = mysqli_fetch_object(mysqli_query($db, "SELECT class FROM users"))) {
-    $cl = $c->class;
-    $baum = false;
-    foreach ($klassen as $k) {
-        if $cl = $k { $baum = true; break(); } # Wenn die Klassenstufe schon in der Array vorhanden
+# Welche Schüler noch nicht alle einträge gemacht haben
+echo("<h3>Folgende Schüler sind noch nicht (vollständig) eingetragen haben:</h3>");
+
+function unfinishedUsers($database, $min_entries) {
+    $ignore_entries = (int) mysqli_fetch_array(mysqli_query($database, "SELECT permission FROM rights WHERE rname='ignore_min_entries'"))['permission'];
+
+    $db_sql = "SELECT users.username, users.class
+    FROM users LEFT
+    JOIN (
+        SELECT users.uid, COUNT(entries.uid) amount
+        FROM entries LEFT
+        JOIN users ON users.uid=entries.uid
+        GROUP BY entries.uid
+    ) AS counter ON users.uid=counter.uid
+    JOIN usergroups ON usergroups.gid=users.gid AND usergroups.permission<$ignore_entries
+    WHERE counter.uid IS NULL OR counter.amount<$min_entries";
+
+    $db_request = mysqli_query($database, $db_sql);
+    while($db_result = mysqli_fetch_array($db_request)) {
+        $unfinishedUsers[$db_result['class']][] = $db_result['username'];
     }
 
-    if (!$baum) { $klassen[] = $k; } # Neue Klassenstufe zu Array hinzufügen
+    return $unfinishedUsers;
 }
 
-# Ausgabe der Auswahl von Jahrgängen
-foreach ($klassen as $kl) {
-    echo('<input '); # irgendeine Auswahl <---
+$data = unfinishedUsers($db, $min_entries);
+
+function findBiggestArray($array) {
+    $counter = 0;
+    foreach($array as $element) {
+        if ($counter < count($element)) { $counter = count($element); }
+    }
+    return $counter;
 }
 
-*/
+$max_unfinished = findBiggestArray($data);
 
-
-$klassenstufen = [5, 6, 7, 8, 9]; # Klassenstufen die Berücksichtigt werden sollen.
-$a_mind = 1; # Anzahl der mind. Einträge
-
-foreach ($klassenstufen as $klasse) {    
-    $users = mysqli_query($db, "SELECT uid FROM users WHERE class = '$klasse'");
-
-    echo("<br>Personen die sich nicht eingetragen haben aus Jahrgang $klasse:<br>");
-    while ($u = mysqli_fetch_object($users)) {
-        $uid = $u->uid;
-
-        $req = mysqli_num_rows(mysqli_query($db, "SELECT pid FROM entries WHERE uid = '$uid'"));
-        if ($req < $a_mind) {
-            $n = mysqli_fetch_array(mysqli_query($db, "SELECT username, gid FROM users WHERE uid = '$uid'"));
-            $gid = $n['gid'];
-
-            $req_gid = mysqli_fetch_array(mysqli_query($db, "SELECT permission FROM usergroups WHERE gid = '$gid'"));
-            if ($req_gid['permission'] < 50) {
-                echo($n['username'] .' (Anzahl der Einträge: '. $req .')<br>');
-            }
+if (count($data) > 0) {
+    echo('<table class="easyTable"><thead><tr><th>Klassenstufe '. implode('</th><th>Klassenstufe ', array_keys($data)) .'</th></tr></thead><tbody>');
+    
+    $main_index = 0;
+    while($main_index < $max_unfinished) {
+        echo('<tr>');
+        foreach (array_keys($data) as $index) {
+            echo('<td>'. $data[$index][$main_index] .'</td>');
         }
+        echo('</tr>');
+        $main_index++;
     }
+    echo('</tbody></table>');
 }
-
 
 function allClasses($database) {
-    $db_request = mysqli_query($database, "SELECT username FROM users WHERE CHAR_LENGTH(username)>7");
+    $db_request = mysqli_query($database, "SELECT users.username FROM users, entries WHERE CHAR_LENGTH(username)>7 AND users.uid=entries.uid");
 
     while($db_username = mysqli_fetch_array($db_request)) {
         $thisClass = preg_split('/(\X{8})/', $db_username['username'])[1];
@@ -71,14 +83,14 @@ function allClasses($database) {
 }
 
 # Export nach Klassen:
-echo('<br><br><h3>nach Klassen Exportieren:</h3><form method="GET" action="export_class.php"><select id="class">');
+echo('<br><br><h3>nach Klassen Exportieren:</h3><form action="export_class.php" method="get"><select name="class">');
 foreach(allClasses($db) as $class) {
     echo('<option value="'. $class .'">'. $class .'</option>');
 }
 echo('</select> <button type="submit">Exportieren</button></form>');
 
 # Themenabfrage
-echo("<br><h3>Die Listen zu den Themen:</h3>");
+echo("<br><h2>Die Listen zu den Themen:</h2>");
 
 $s = mysqli_query($db, "SELECT pid, pname FROM selection");
 if (mysqli_num_rows($s) > 0) {
@@ -86,21 +98,21 @@ if (mysqli_num_rows($s) > 0) {
 		$pid = $o['pid'];
 		$name = $o['pname'];
 
-		echo('<h2 style="font-size:22px;">'. $name .' (Nr.'. $pid .') <a href="export_project.php?pid='. $pid .'"><img height="20px" src="../design/icons/export-icon.png" alt="Export" /></a><br></h2>');
+		echo('<h3 style="font-size:16px;">'. $name .' (Nr.'. $pid .') <a href="export_project.php?pid='. $pid .'"><img height="16px" src="../design/icons/export-icon.png" alt="Export" /></a><br></h3>');
 
         $request = mysqli_query($db, "SELECT uid FROM entries WHERE pid = '$pid'");
         
-		echo('<table style="border-collapse: collapse;border:1px solid black;min-width:300px;">');
-		echo('<tr style="border-collapse: collapse;border:1px solid black;"><td>Name:</td></tr>');
+		echo('<table class="easyTable" style="min-width:300px;">');
+		echo('<thead><tr><th>Name:</th></tr></thead><tbody>');
 		foreach($request as $h) {
 			$usid = $h['uid'];
 			$j = mysqli_fetch_array(mysqli_query($db, "SELECT username FROM users WHERE uid = '$usid'"));
 			$uname = $j['username'];
 
-			echo('<tr style="border-collapse: collapse;border:1px solid black;"><td>'.$uname.'</td></tr>');
+			echo('<tr><td>'.$uname.'</td></tr>');
 		}
 
-		echo('</table>');
+		echo('</tbody></table>');
 	}
 }
 
