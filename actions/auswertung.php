@@ -62,7 +62,7 @@ if (mysqli_num_rows($s) > 0) {
 		$pid = $o['pid'];
 		$name = $o['pname'];
 
-		echo('<h2 style="font-size:22px;">'. $name .' (Nr.'. $pid .')<br></h2>');
+		echo('<h2 style="font-size:22px;">'. $name .' (Nr.'. $pid .') <a href="export.php?pid='. $pid .'"><img height="20px" src="../design/icons/export-icon.png" alt="Export" /></a><br></h2>');
 
         $request = mysqli_query($db, "SELECT uid FROM entries WHERE pid = '$pid'");
         
