@@ -2,7 +2,7 @@
 # Datenbank Login Daten
 $dbhost = "localhost";      # Hostname
 $dbuser = "mlg-wahl";       # Nutzer
-$dbpass = "derfischmax";    # Passwort
+$dbpass = "***";    # Passwort
 $dbtable = "mlg-wahl";      # Tabelle
 
 ################################################################################
